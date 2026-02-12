@@ -50,7 +50,7 @@ def build_query(accounts, keywords):
     return base
 
 
-def fmt_item(tw, user_map):
+def fmt_item(tw, user_map, account_tags=None):
     u = user_map.get(tw.get("author_id"), {})
     username = u.get("username", "unknown")
     text = " ".join((tw.get("text") or "").replace("\n", " ").split())
@@ -59,9 +59,11 @@ def fmt_item(tw, user_map):
     m = tw.get("public_metrics", {})
     likes = m.get("like_count", 0)
     rts = m.get("retweet_count", 0)
+    tag = (account_tags or {}).get(username, "未分类")
     return {
         "id": tw.get("id"),
         "username": username,
+        "tag": tag,
         "created_at": created,
         "text": text,
         "likes": likes,
@@ -101,7 +103,7 @@ def main():
         return 0
 
     users = {u.get("id"): u for u in data.get("includes", {}).get("users", [])}
-    tweets = [fmt_item(t, users) for t in data.get("data", [])]
+    tweets = [fmt_item(t, users, cfg.get("account_tags", {})) for t in data.get("data", [])]
 
     new_items = []
     now = int(time.time())
@@ -123,7 +125,7 @@ def main():
         top = sorted(new_items, key=lambda x: (x["likes"] + x["retweets"]), reverse=True)[:3]
         lines = ["【X Breaking】"]
         for i, t in enumerate(top, 1):
-            lines.append(f"{i}) @{t['username']} | {t['text']}")
+            lines.append(f"{i}) [{t['tag']}][@{t['username']}] {t['text']}")
             lines.append(f"   {t['url']}")
         print("\n".join(lines))
         return 0
@@ -135,7 +137,7 @@ def main():
     top = sorted(tweets, key=lambda x: (x["likes"] + x["retweets"]), reverse=True)[:8]
     lines = ["【X Market Take（1h）】", "按影响力筛选的高热观点/新闻："]
     for i, t in enumerate(top, 1):
-        lines.append(f"{i}) @{t['username']}: {t['text']}")
+        lines.append(f"{i}) [{t['tag']}][@{t['username']}] {t['text']}")
     lines.append("提示：以上为信息摘要，建议结合主流媒体与官方公告交叉验证。")
     print("\n".join(lines))
     return 0
