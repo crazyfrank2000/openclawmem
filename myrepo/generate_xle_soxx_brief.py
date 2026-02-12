@@ -2,13 +2,21 @@
 import csv
 import datetime as dt
 import io
-import json
 import urllib.request
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-CFG = json.loads((BASE / 'automation_config.json').read_text(encoding='utf-8'))
 OUT = BASE / 'daily_xle_soxx_brief.md'
+
+SYMBOLS = [
+    ('xle.us', 'XLE（能源）'),
+    ('soxx.us', 'SOXX（半导体）'),
+    ('qqq.us', 'QQQ（纳指100ETF）'),
+    ('spy.us', 'SPY（标普500ETF）'),
+    ('gld.us', 'GLD（黄金ETF）'),
+    ('slv.us', 'SLV（白银ETF）'),
+    ('vwo.us', 'VWO（新兴市场ETF）'),
+]
 
 
 def load_stooq_daily(symbol: str):
@@ -52,36 +60,39 @@ def summarize(symbol: str, data):
     }
 
 
-def build_md(xle, soxx):
+def build_md(items):
     now = dt.datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
-    return f"""# 每日收盘简报：XLE / SOXX
+    lines = [
+        '# 每日收盘简报：重点ETF',
+        '',
+        f'_生成时间：{now}_',
+        '',
+    ]
 
-_生成时间：{now}_
+    for title, info in items:
+        lines.extend([
+            f'## {title}',
+            f"- 最新交易日：{info['date']}",
+            f"- 收盘价：{info['close']:.2f}",
+            f"- 日涨跌：{info['ret1']:+.2f}%",
+            f"- 20日涨跌：{info['ret20']:+.2f}%",
+            f"- 20日区间：{info['low20']:.2f} ~ {info['high20']:.2f}",
+            f"- 成交量：{info['vol']:,}",
+            '',
+        ])
 
-## XLE（能源）
-- 最新交易日：{xle['date']}
-- 收盘价：{xle['close']:.2f}
-- 日涨跌：{xle['ret1']:+.2f}%
-- 20日涨跌：{xle['ret20']:+.2f}%
-- 20日区间：{xle['low20']:.2f} ~ {xle['high20']:.2f}
-- 成交量：{xle['vol']:,}
-
-## SOXX（半导体）
-- 最新交易日：{soxx['date']}
-- 收盘价：{soxx['close']:.2f}
-- 日涨跌：{soxx['ret1']:+.2f}%
-- 20日涨跌：{soxx['ret20']:+.2f}%
-- 20日区间：{soxx['low20']:.2f} ~ {soxx['high20']:.2f}
-- 成交量：{soxx['vol']:,}
-
-数据源：Stooq（公开行情）
-"""
+    lines.append('数据源：Stooq（公开行情）')
+    lines.append('')
+    return '\n'.join(lines)
 
 
 def main():
-    xle = summarize('xle.us', load_stooq_daily('xle.us'))
-    soxx = summarize('soxx.us', load_stooq_daily('soxx.us'))
-    md = build_md(xle, soxx)
+    items = []
+    for symbol, title in SYMBOLS:
+        info = summarize(symbol, load_stooq_daily(symbol))
+        items.append((title, info))
+
+    md = build_md(items)
     OUT.write_text(md, encoding='utf-8')
     print(str(OUT))
 
