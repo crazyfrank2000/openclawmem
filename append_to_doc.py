@@ -97,7 +97,8 @@ def main():
     )
     ap.add_argument(
         "--gog-token",
-        default=str(Path(__file__).resolve().parents[2] / "secrets" / "gog_refresh_token.json"),
+        # Default to workspace-relative secrets path (this repo layout)
+        default=str(Path(__file__).resolve().parent / "secrets" / "gog_refresh_token.json"),
     )
     args = ap.parse_args()
 
