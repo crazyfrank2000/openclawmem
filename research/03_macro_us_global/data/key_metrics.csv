@@ -1,1 +1,4 @@
 date,region,metric,value,unit,frequency,source,notes
+2026-02-14,US,CPI MoM (Jan),0.2,%,monthly,user_provided,Expected 0.3% (positive surprise)
+2026-02-14,US,CPI YoY (Jan),2.4,%,monthly,user_provided,Expected 2.5% (positive surprise)
+2026-02-14,US,Core CPI (Jan),as_expected,,monthly,user_provided,User notes core CPI met expectations
