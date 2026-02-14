@@ -8,8 +8,6 @@ This folder stores reusable scripts, prototypes, and automation used across proj
 - Put one-off experiments under `scratch/`.
 - Avoid committing secrets (API keys, tokens). Use env vars.
 
-## Suggested structure
-- `scripts/` – reusable scripts
-- `pipelines/` – multi-step workflows
-- `notebooks/` – optional
-- `scratch/` – temporary experiments
+## Structure
+- Keep only project folders directly under `code/` (no generic subfolders).
+- Example: `code/fred/`, `code/x_observer/`, `code/research_tools/`.
