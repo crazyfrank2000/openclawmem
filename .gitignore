@@ -1,0 +1,17 @@
+# Secrets
+secrets/
+
+# Local caches / env
+.cache/
+.clawhub/
+.venv/
+.venv_*/
+
+# Large / scratch
+myrepo/*.png
+myrepo/*.json
+myrepo/*.jsonl
+myrepo/*.csv
+myrepo/*.docx
+myrepo/*.srt
+myrepo/*.pdf
