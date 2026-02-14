@@ -8,6 +8,18 @@ secrets/
 .venv_*/
 **/.venv/
 
+# Local OpenClaw setup (do not commit)
+skills/
+tools/
+
+# Attachments dropped in repo root (do not commit)
+/*.pdf
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
+
 # Large / scratch
 myrepo/*.png
 myrepo/*.json
