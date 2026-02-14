@@ -6,6 +6,7 @@ secrets/
 .clawhub/
 .venv/
 .venv_*/
+**/.venv/
 
 # Large / scratch
 myrepo/*.png
